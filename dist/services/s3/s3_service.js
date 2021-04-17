@@ -12,14 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3Service = void 0;
 const s3_1 = __importDefault(require("aws-sdk/clients/s3"));
-const aws_config_1 = require("../../config/aws_config");
+const appConfig_1 = require("../../config/appConfig");
 class S3Service {
     constructor() {
-        this.bucketName = aws_config_1.s3_bucket_name;
+        this.bucketName = appConfig_1.s3BucketName;
         this.client = new s3_1.default({
-            region: aws_config_1.region,
-            accessKeyId: aws_config_1.aws_access_key,
-            secretAccessKey: aws_config_1.aws_secret_key,
+            region: appConfig_1.region,
+            accessKeyId: appConfig_1.awsAccessKey,
+            secretAccessKey: appConfig_1.awsSecretKey,
         });
     }
     async upload(file) {
