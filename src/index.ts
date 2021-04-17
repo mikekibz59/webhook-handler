@@ -1,3 +1,12 @@
-console.log('Hello world')
-const mikeName: string = 'hello world'
-console.log('name', mikeName)
+/**
+ * handler function that aws lambda
+ * will hook to
+ * @format */
+
+export const lambdaHandler = async (event: any) => {
+
+	return {
+		status: 200,
+	};
+};
+
