@@ -1,0 +1,19 @@
+{
+  "name": "webhook_handler",
+  "version": "1.0.0",
+  "description": "Amazon lambda function to handle webhook responses from Mailgun",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc -p ."
+  },
+  "keywords": [
+    "AWS",
+    "lambda"
+  ],
+  "author": "mikekibz59@gmail.com",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.2.4"
+  }
+}
