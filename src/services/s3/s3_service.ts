@@ -8,23 +8,23 @@
 
 import S3 from 'aws-sdk/clients/s3';
 import {
-	s3_bucket_name,
-	aws_access_key,
-	aws_secret_key,
+	s3BucketName,
+	awsAccessKey,
+	awsSecretKey,
 	region,
-} from '../../config/aws_config';
+} from '../../config/appConfig';
 import { File, UploadedFile, S3FileUploader } from './models';
 
 export class S3Service implements S3FileUploader {
 	private client: S3;
 
-	private readonly bucketName = s3_bucket_name;
+	private readonly bucketName = s3BucketName;
 
 	constructor() {
 		this.client = new S3({
 			region: region,
-			accessKeyId: aws_access_key,
-			secretAccessKey: aws_secret_key,
+			accessKeyId: awsAccessKey,
+			secretAccessKey: awsSecretKey,
 		});
 	}
 
