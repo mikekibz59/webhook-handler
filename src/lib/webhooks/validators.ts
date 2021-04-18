@@ -6,7 +6,7 @@
  */
 
 import Crypto from 'crypto';
-import { VerifyParams } from './model';
+import { VerifyParams } from './interfaces';
 
 export const verifyHookResponse = (
 	signKey: string,
@@ -15,6 +15,5 @@ export const verifyHookResponse = (
 	const encodedToken = Crypto.createHmac('sha256', signKey)
 		.update(params.timestamp.concat(params.token))
 		.digest('hex');
-
 	return encodedToken === params.signature;
 };

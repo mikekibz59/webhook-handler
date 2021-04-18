@@ -8,7 +8,7 @@
  * @format
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signingKey = exports.region = exports.s3BucketName = exports.awsAccessKey = exports.awsSecretKey = void 0;
+exports.topicArn = exports.signingKey = exports.region = exports.s3BucketName = exports.awsAccessKey = exports.awsSecretKey = void 0;
 const dotenv_1 = require("dotenv");
 // load env variables
 dotenv_1.config();
@@ -18,3 +18,4 @@ exports.awsAccessKey = String(process.env.AWS_ACCESS_KEY);
 exports.s3BucketName = String(process.env.S3_BUCKET_NAME);
 exports.region = String(process.env.AWS_REGION);
 exports.signingKey = String(process.env.SIGNING_KEY);
+exports.topicArn = String(process.env.TOPIC_ARN);
