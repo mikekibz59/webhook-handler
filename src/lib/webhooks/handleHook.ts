@@ -7,7 +7,7 @@
  * @format
  */
 
-import { VerifyParams } from './interfaces';
+import { VerifyParams, HandleHookProcessor } from './interfaces';
 import { verifyHookResponse } from './validators';
 import { signingKey } from '../../config/appConfig';
 import { File, UploadedFile } from '../../services/s3/interfaces';
@@ -15,10 +15,15 @@ import { SnsObject, HookResponse } from '../../services/publisher/interfaces';
 import { S3Service } from '../../services/s3/s3Service';
 import { SnsPublisher } from '../../services/publisher/snsPublisher';
 import { topicArn } from '../../config/appConfig';
-export class HandleHookResponse {
+
+
+export class HandleHookResponse implements HandleHookProcessor {
 	private response: any;
 	private readonly TopicArn = topicArn;
 	private readonly Provider = 'Mailgun';
+	mimeType: string = 'application/json'
+	extensionType: string = 'json'
+
 
 	constructor(response: any) {
 		this.response = response;
@@ -42,8 +47,8 @@ export class HandleHookResponse {
 		const eventData: any = this.response['event-data'];
 		const fileData: File = {
 			name: eventData.event,
-			type: 'application/json',
-			extension: 'json',
+			type: this.mimeType,
+			extension: this.extensionType,
 			content: JSON.stringify(this.response),
 		};
 		return fileData;

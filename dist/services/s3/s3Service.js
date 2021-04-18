@@ -27,7 +27,8 @@ class S3Service {
             const path = await this.uploadFile(file);
             return { path };
         }
-        catch (_a) {
+        catch (error) {
+            console.error('s3 error', error);
             return undefined;
         }
     }

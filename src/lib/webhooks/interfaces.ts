@@ -11,3 +11,6 @@ export interface VerifyParams {
 	signature: string;
 }
 
+export interface HandleHookProcessor {
+	processData: () => Promise<any>;
+}

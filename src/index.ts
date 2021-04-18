@@ -3,13 +3,18 @@
  * will hook to
  * @format */
 
+import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { HandleHookResponse } from './lib/webhooks/handleHook';
-export const lambdaHandler = async (event: any) => {
-	const data: any = JSON.parse(event);
+
+export async function lambdaHandler(
+	event: APIGatewayEvent,
+	context: Context
+): Promise<APIGatewayProxyResult> {
+	const data: any = event;
 	const response: any = await new HandleHookResponse(data).processData();
 
 	return {
 		statusCode: 200,
 		body: response,
 	};
-};
+}

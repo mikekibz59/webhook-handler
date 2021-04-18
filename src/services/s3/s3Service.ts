@@ -30,9 +30,10 @@ export class S3Service implements S3FileUploader {
 
 	async upload(file: File): Promise<UploadedFile | undefined> {
 		try {
-			const path = await this.uploadFile(file);
+			const path: string = await this.uploadFile(file);
 			return { path };
-		} catch {
+		} catch (error) {
+			console.error('s3 error', error);
 			return undefined;
 		}
 	}
