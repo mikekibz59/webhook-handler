@@ -11,8 +11,3 @@ export interface VerifyParams {
 	signature: string;
 }
 
-export interface returnValue {
-	Provider: string;
-	timestamp: number;
-	type: string;
-}

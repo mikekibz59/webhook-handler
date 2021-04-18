@@ -11,15 +11,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HandleHookResponse = void 0;
 const validators_1 = require("./validators");
 const appConfig_1 = require("../../config/appConfig");
-const s3_service_1 = require("../../services/s3/s3_service");
+const s3Service_1 = require("../../services/s3/s3Service");
+const snsPublisher_1 = require("../../services/publisher/snsPublisher");
+const appConfig_2 = require("../../config/appConfig");
 class HandleHookResponse {
     constructor(response) {
+        this.TopicArn = appConfig_2.topicArn;
+        this.Provider = 'Mailgun';
         this.response = response;
     }
-    processData() {
+    async processData() {
         this.validateHook();
-        const path = this.saveResponse();
-        return path;
+        const s3Response = await this.saveResponse();
+        const snsResponse = await this.publishResponse();
+        return { s3Response, snsResponse };
     }
     validateHook() {
         const signatureParams = this.response.signature;
@@ -28,7 +33,7 @@ class HandleHookResponse {
             throw Error("webhook isn't valid");
         }
     }
-    extractFileProperties() {
+    extractFileSaveProperties() {
         const eventData = this.response['event-data'];
         const fileData = {
             name: eventData.event,
@@ -39,10 +44,31 @@ class HandleHookResponse {
         return fileData;
     }
     async saveResponse() {
-        const file = this.extractFileProperties();
-        const sendData = new s3_service_1.S3Service();
+        const file = this.extractFileSaveProperties();
+        const sendData = new s3Service_1.S3Service();
         const upload = await sendData.upload(file);
         return upload;
+    }
+    extractFilePublishProperties() {
+        const eventData = this.response['event-data'];
+        const event = eventData.event;
+        const timestamp = eventData.timestamp;
+        const hookMessage = {
+            Provider: this.Provider,
+            timestamp: timestamp,
+            type: `email ${event}`,
+        };
+        const response = {
+            Message: JSON.stringify(hookMessage),
+            TopicArn: this.TopicArn,
+        };
+        return response;
+    }
+    async publishResponse() {
+        const publisher = new snsPublisher_1.SnsPublisher();
+        const params = this.extractFilePublishProperties();
+        const value = await publisher.publish(params);
+        return value;
     }
 }
 exports.HandleHookResponse = HandleHookResponse;

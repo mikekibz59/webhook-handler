@@ -13,7 +13,7 @@ import {
 	awsSecretKey,
 	region,
 } from '../../config/appConfig';
-import { File, UploadedFile, S3FileUploader } from './models';
+import { File, UploadedFile, S3FileUploader } from './interfaces';
 
 export class S3Service implements S3FileUploader {
 	private client: S3;

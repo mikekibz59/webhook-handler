@@ -8,10 +8,10 @@ exports.lambdaHandler = void 0;
 const handleHook_1 = require("./lib/webhooks/handleHook");
 const lambdaHandler = async (event) => {
     const data = JSON.parse(event);
-    const response = new handleHook_1.HandleHookResponse(data).processData();
+    const response = await new handleHook_1.HandleHookResponse(data).processData();
     return {
-        status: 200,
-        data: response,
+        statusCode: 200,
+        body: response,
     };
 };
 exports.lambdaHandler = lambdaHandler;

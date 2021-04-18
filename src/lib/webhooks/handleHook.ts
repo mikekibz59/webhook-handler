@@ -7,23 +7,28 @@
  * @format
  */
 
-import { VerifyParams, returnValue } from './model';
+import { VerifyParams } from './interfaces';
 import { verifyHookResponse } from './validators';
 import { signingKey } from '../../config/appConfig';
-import { File, UploadedFile } from '../../services/s3/models';
-import { S3Service } from '../../services/s3/s3_service';
-
+import { File, UploadedFile } from '../../services/s3/interfaces';
+import { SnsObject, HookResponse } from '../../services/publisher/interfaces';
+import { S3Service } from '../../services/s3/s3Service';
+import { SnsPublisher } from '../../services/publisher/snsPublisher';
+import { topicArn } from '../../config/appConfig';
 export class HandleHookResponse {
-	response: any;
+	private response: any;
+	private readonly TopicArn = topicArn;
+	private readonly Provider = 'Mailgun';
 
 	constructor(response: any) {
 		this.response = response;
 	}
 
-	processData(): any{
+	async processData(): Promise<any> {
 		this.validateHook();
-		const path: any = this.saveResponse();
-		return path;
+		const s3Response: any = await this.saveResponse();
+		const snsResponse: any = await this.publishResponse();
+		return { s3Response, snsResponse };
 	}
 	private validateHook(): void {
 		const signatureParams: VerifyParams = this.response.signature;
@@ -33,7 +38,7 @@ export class HandleHookResponse {
 		}
 	}
 
-	private extractFileProperties(): File {
+	private extractFileSaveProperties(): File {
 		const eventData: any = this.response['event-data'];
 		const fileData: File = {
 			name: eventData.event,
@@ -45,9 +50,32 @@ export class HandleHookResponse {
 	}
 
 	private async saveResponse(): Promise<UploadedFile | undefined> {
-		const file: File = this.extractFileProperties();
+		const file: File = this.extractFileSaveProperties();
 		const sendData: any = new S3Service();
 		const upload: UploadedFile | undefined = await sendData.upload(file);
 		return upload;
+	}
+
+	private extractFilePublishProperties(): SnsObject {
+		const eventData: any = this.response['event-data'];
+		const event: string = eventData.event;
+		const timestamp: number = eventData.timestamp;
+		const hookMessage: HookResponse = {
+			Provider: this.Provider,
+			timestamp: timestamp,
+			type: `email ${event}`,
+		};
+		const response: SnsObject = {
+			Message: JSON.stringify(hookMessage),
+			TopicArn: this.TopicArn,
+		};
+		return response;
+	}
+
+	private async publishResponse(): Promise<any> {
+		const publisher: SnsPublisher = new SnsPublisher();
+		const params: SnsObject = this.extractFilePublishProperties();
+		const value = await publisher.publish(params);
+		return value;
 	}
 }
