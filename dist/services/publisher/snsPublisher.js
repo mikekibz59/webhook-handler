@@ -26,7 +26,8 @@ class SnsPublisher {
             const response = await this.publishPayload(data);
             return response;
         }
-        catch (_a) {
+        catch (error) {
+            console.error('sns error', error);
             return undefined;
         }
     }

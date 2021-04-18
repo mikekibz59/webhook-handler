@@ -15,14 +15,14 @@ export interface SnsObject {
 	TopicArn: string;
 }
 
-export interface SNSPublisher {
-	publish: (data: SnsObject) => Promise<Object | undefined>;
-}
-
 interface requestId{
 	RequestId: string;
 }
 export interface PublisherResponse{
 	ResponseMetadata: requestId;
 	MessageId: string;
+}
+
+export interface SNSPublisher {
+	publish: (data: SnsObject) => Promise<PublisherResponse | undefined>;
 }
