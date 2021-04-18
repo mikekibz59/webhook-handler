@@ -18,6 +18,8 @@ class HandleHookResponse {
     constructor(response) {
         this.TopicArn = appConfig_2.topicArn;
         this.Provider = 'Mailgun';
+        this.mimeType = 'application/json';
+        this.extensionType = 'json';
         this.response = response;
     }
     async processData() {
@@ -37,8 +39,8 @@ class HandleHookResponse {
         const eventData = this.response['event-data'];
         const fileData = {
             name: eventData.event,
-            type: 'application/json',
-            extension: 'json',
+            type: this.mimeType,
+            extension: this.extensionType,
             content: JSON.stringify(this.response),
         };
         return fileData;

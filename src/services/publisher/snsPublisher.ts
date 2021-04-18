@@ -25,7 +25,8 @@ export class SnsPublisher implements SNSPublisher {
 		try {
 			const response: PublisherResponse = await this.publishPayload(data);
 			return response;
-		} catch {
+    } catch (error) {
+      console.error('sns error', error)
 			return undefined;
 		}
 	}
